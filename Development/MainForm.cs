@@ -64,7 +64,7 @@ namespace GXDLMSDirector
     public partial class MainForm : Form
     {
         GXNet events;
-
+        public static MainForm form=null;
         /// <summary>
         /// Active DC.
         /// </summary>
@@ -112,7 +112,9 @@ namespace GXDLMSDirector
         /// </summary>
         GXByteBuffer receivedTraceData = new GXByteBuffer();
 
-
+        public MainForm Instance{
+            get {return form; }
+        }
         private static GXDLMSDevice GetDevice(GXDLMSObject item)
         {
             return item.Parent.Tag as GXDLMSDevice;
@@ -148,7 +150,7 @@ namespace GXDLMSDirector
             }
         }
 
-        public static void InitMain()
+        public static MainForm InitMain()
         {
             //Debug traces are written only log file.
             if (!Debugger.IsAttached)
@@ -169,8 +171,9 @@ namespace GXDLMSDirector
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
             }
-            MainForm form = new MainForm();
+            form= new MainForm();
             Application.Run(form);
+            return form;
         }
 
         /// <summary>
@@ -270,6 +273,8 @@ namespace GXDLMSDirector
             PropertyErrorView.AllowUserToAddRows = false;
             PropertyErrorView.AllowUserToDeleteRows = false;
             PropertyErrorView.AutoSize = true;
+
+            
         }
 
         private bool IsProfileGenericTarget(object target)
@@ -1767,6 +1772,7 @@ namespace GXDLMSDirector
                         GXDLMSDevice dev = (GXDLMSDevice)obj;
                         this.OnProgress(null, "Connecting", 0, 1);
                         dev.InitializeConnection();
+                        return;
                         if (InvokeRequired)
                         {
                             BeginInvoke(new UpdateConformance(this.OnUpdateConformance), (GXDLMSDevice)obj);
@@ -3392,8 +3398,9 @@ namespace GXDLMSDirector
         /// Load settings from the file.
         /// </summary>
         /// <param name="path"></param>
-        void LoadFile(string path)
+        public void LoadFile(string path)
         {
+            path = "C:\\TEMP\\sample4.gxc";
             if (File.Exists(path) && Path.GetExtension(path) == ".gxm")
             {
                 //If macro file.
@@ -3544,6 +3551,7 @@ namespace GXDLMSDirector
             {
                 mruManager.Insert(0, path);
             }
+            DeviceManager.InitDevices(Devices);
         }
 
         /// <summary>

@@ -112,6 +112,7 @@ namespace GXDLMSDirector
         {
             //Allow only one instance.
             bool first;
+            MainForm form=null;
             try
             {
                 first = mutex.WaitOne(TimeSpan.Zero, true);
@@ -224,7 +225,7 @@ namespace GXDLMSDirector
                     catch (Exception)
                     {
                     }
-                    MainForm.InitMain();
+                    form= MainForm.InitMain();
                 }
                 catch (Exception Ex)
                 {
@@ -239,6 +240,7 @@ namespace GXDLMSDirector
                     Gurux.Win32.SetForegroundWindow(p.MainWindowHandle);
                 }
             }
+
         }
 
         /// <summary>

@@ -1717,9 +1717,10 @@ namespace GXDLMSDirector
         /// <param name="sender">Sender.</param>
         /// <param name="obj">Object to read.</param>
         /// <param name="forceRead">Force all attributes read.</param>
-        public void Read(object sender, GXDLMSObject obj, bool forceRead)
+        public object Read(object sender, GXDLMSObject obj, bool forceRead)
         {
             GXReplyData reply = new GXReplyData();
+            object datavalue=null;
             int[] indexes = (obj as IGXDLMSBase).GetAttributeIndexToRead(forceRead);
             foreach (int it in indexes)
             {
@@ -1892,17 +1893,17 @@ namespace GXDLMSDirector
                     }
                     if (obj is IGXDLMSBase)
                     {
-                        object value = reply.Value;
+                        datavalue = reply.Value;
                         DataType type;
-                        if (value is byte[] && (type = obj.GetUIDataType(it)) != DataType.None)
+                        if (datavalue is byte[] && (type = obj.GetUIDataType(it)) != DataType.None)
                         {
-                            value = GXDLMSClient.ChangeType((byte[])value, type, client.UseUtc2NormalTime);
+                            datavalue = GXDLMSClient.ChangeType((byte[])datavalue, type, client.UseUtc2NormalTime);
                         }
                         if (reply.DataType != DataType.None && obj.GetDataType(it) == DataType.None)
                         {
                             obj.SetDataType(it, reply.DataType);
                         }
-                        client.UpdateValue(obj, it, value);
+                        client.UpdateValue(obj, it, datavalue);
                     }
                     if (OnAfterRead != null)
                     {
@@ -1911,6 +1912,7 @@ namespace GXDLMSDirector
                     obj.SetLastReadTime(it, DateTime.Now);
                 }
             }
+            return datavalue;
         }
 
         public void Write(GXDLMSObject obj, int index)
